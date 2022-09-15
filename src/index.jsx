@@ -21,6 +21,11 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+
+    axios.get('http://localhost:8080/reivews')
+      .then(response => console.log(response))
+      .catch(err => console.log(err));
+
     axios.get('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfc/products/', {
       headers: {'Authorization': `${API_KEY}`},
       params: {
