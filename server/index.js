@@ -13,7 +13,7 @@ app.get('http://localhost:8080/reviews', (req, res) => {
   .catch(err => console.log(err))
 })
 
-db.getReviews();
+//db.getReviews();
 
 const PORT = 8080;
 

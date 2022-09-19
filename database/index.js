@@ -69,7 +69,90 @@ const getReviewMeta = (product_id) => {
   .catch((err) => (console.log('error in getting metadata', err)));
 }
 
+const postReview = (postObject) => {
+  const product_id = postObject.product_id
+  const rating = postObject.rating
+  const summary = postObject.summary
+  const body = postObject.body
+  const recommend = postObject.recommend
+  const reviewer_name = postObject.reviewer_name
+  const reviewer_email = postObject.reviewer_email
+  const date = postObject.date || Date.now()
+  const response = 'null'
+  const helpfulness = '0'
+  const photos = postObject.photos
+  const characteristics = postObject.characteristics
 
-//getReviewData(5,1,3, 'date')  //getReviewData query test
+  db.queryAsync(
+    `INSERT INTO review (product_id, rating, summary, body, recommend, reviewer_name, reviewer_email, date, response, helpfulness) VALUES (
+      ${product_id},
+      ${rating},
+      '${summary}',
+      '${body}',
+      ${recommend},
+      '${reviewer_name}',
+      '${reviewer_email}',
+      ${date},
+      '${response}',
+      ${helpfulness}
+    )`
+  )
+    .then(() => {
+      console.log('successfully posted review');
+    })
+    .catch((err) => (console.log('error in posting 1', err)));
+  photos.forEach((url) => {
+    db.queryAsync(
+      `INSERT INTO photos (url, review_id) VALUES ('${url}', (SELECT MAX (id) FROM review))`
+    )
+      .then(() => {
+        console.log('successfully posted photo');
+      })
+      .catch((err) => (console.log('error in posting 2', err)));
+  })
+  const charObj = {
+    223577: 'Fit',
+    223578: 'Length',
+    223579: 'Comfort',
+    223580: 'Quality'
+  }
+  for (var key in characteristics) {
+    db.queryAsync(
+      `INSERT INTO characteristics (product_id, name) VALUES ('${product_id}', '${charObj[key]}')`
+    )
+      .then(() => {
+        console.log('successfully posted characteristics 1');
+      })
+      .catch((err) => (console.log('error in posting 3', err)));
+    db.queryAsync(
+      `INSERT INTO characteristicreviews (characteristic_id, review_id, value) VALUES ((SELECT MAX (id) FROM characteristics), (SELECT MAX (id) FROM review), ${characteristics[key]})`
+    )
+      .then(() => {
+        console.log('successfully posted characteristics 2');
+      })
+      .catch((err) => (console.log('error in posting 4', err)));
+  }
+}
+
+const markHelpful = (reviewId) => {
+  db.queryAsync(
+    `UPDATE review SET helpfulness = helpfulness + 1 WHERE id = ${reviewId}`
+  )
+  .then(() => {
+    console.log('successfully increased helpfulness');
+  })
+  .catch((err) => (console.log('error in increasing helpfulness', err)));
+}
+
+const markReported = (reviewId) => {
+  db.queryAsync(
+    `UPDATE review SET reported = true WHERE id = ${reviewId}`
+  )
+  .then(() => {
+    console.log('successfully reported');
+  })
+  .catch((err) => (console.log('error in markReported', err)));
+}
+
 module.exports.getReviewData = getReviewData;
 module.exports.db = db;

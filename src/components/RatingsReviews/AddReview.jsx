@@ -119,6 +119,7 @@ class AddReview extends React.Component {
   handleSubmit(e) {
     handleInteractions(e, 'Reviews');
     e.preventDefault();
+    console.log('this.postData =', this.postData)
     axios.post('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfc/reviews',
       this.postData, {
       headers: {'Authorization': `${API_KEY}`}
