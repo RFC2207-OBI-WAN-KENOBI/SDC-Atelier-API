@@ -43,28 +43,32 @@ const getReviewData = (product_Id, page = 1, count = 5, sort = 'helpfulness') =>
 
     FROM public.review WHERE review.product_id=${product_Id} ORDER BY ${sort} DESC LIMIT ${count}`)
     .then((res) => {
-      console.log(res[0].rows);
+      //console.log(res[0].rows);
       return {'product': product_Id, 'page':page, 'count':count, 'result':res[0].rows}
     })
     .then((res) => {
-      console.log(res);
+      //console.log(res);
       return res
     })
     .catch((err) => (console.log('error in getting reviews', err)));
 }
 
-const getReviewMeta = (req, res) => {
+const getReviewMeta = (product_id) => {
   return db.queryAsync(
-    `SELECT * FROM public.characteristicreviews LIMIT 3`
+    `SELECT
+	    (SELECT product_id FROM review WHERE product_id = ${product_id} LIMIT 1),
+      (SELECT json_object_agg(rating, count) ratings FROM (SELECT rating, COUNT(rating) FROM review WHERE product_id = ${product_id} GROUP BY rating) ratings),
+      (SELECT json_object_agg(recommend, count) recommended FROM (SELECT recommend, COUNT(recommend) FROM review WHERE product_id = ${product_id} GROUP BY recommend) recommended),
+      (SELECT json_object_agg(name, json_build_object('id', id, 'value', avg)) AS
+      characteristics FROM (SELECT name, characteristics.id, AVG(value) FROM characteristics LEFT JOIN characteristicreviews ON characteristics.id = characteristicreviews.characteristic_id WHERE characteristics.product_id = ${product_id} GROUP BY characteristics.id) characteristics)`
   )
   .then((res) => {
-    console.log(res[0].rows);
-    return res
+    //console.log(res[0].rows);
+    return res[0].rows;
   })
-  .catch((err) => (console.log('error in getting reviews', err)));
+  .catch((err) => (console.log('error in getting metadata', err)));
 }
 
-getReviewMeta();
 
 //getReviewData(5,1,3, 'date')  //getReviewData query test
 module.exports.getReviewData = getReviewData;
