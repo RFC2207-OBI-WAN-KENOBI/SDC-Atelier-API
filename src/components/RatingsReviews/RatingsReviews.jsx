@@ -3,8 +3,9 @@ import ReviewsList from './ReviewsList.jsx';
 import AddReview from './AddReview.jsx';
 import RatingBreakdown from './RatingBreakdown.jsx';
 import ProductBreakdown from './ProductBreakdown.jsx';
-import {handleInteractions} from '../../utils.js';
-import { API_KEY } from  '../../../src/config/config.js';
+import { handleInteractions } from '../../utils.js';
+import { API_KEY } from '../../../src/config/config.js';
+
 
 const axios = require('axios');
 
@@ -35,21 +36,25 @@ class RatingsReviews extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    console.log('hello from ratingsreviews componentDidUpdate');
     if (this.props.product !== prevProps.product) {
-      axios.get('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfc/reviews', {
-        headers: {'Authorization': `${API_KEY}`},
-        params: {
-          count: 50,
-          // page: 1,
-          product_id: this.props.product.id,
-          sort: 'relevant'
-        }})
-      .then((res) => {
-        this.setState({reviews: res.data.results})
-        this.allReviews = res.data.results
-      })
-      .catch((err) =>
-        console.log(err));
+      axios.get('http://localhost:8080/reviews',
+        {
+          params: {
+            count: 50,
+            // page: 1,
+            product_id: this.props.product.id,
+            sort: 'relevant'
+          }
+        }
+      )
+        .then(res => {
+          console.log(res);
+          this.setState({ reviews: res.data.results });
+          this.allReviews = res.data.results;
+        })
+        .catch((err) =>
+          console.log('this is a big old error from get review componentDidMount = ', err));
     }
   }
 
@@ -58,19 +63,20 @@ class RatingsReviews extends React.Component {
     e.preventDefault();
     let sortMethod = e.target.value
     this.setState({ sort: sortMethod });
-    axios.get('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfc/reviews', {
-      headers: {'Authorization': `${API_KEY}`},
+    axios.get('http://localhost:8080/reviews', {
+
       params: {
         // count: 10,
         product_id: this.props.product.id,
         sort: sortMethod
-      }})
-    .then((res) => {
-      console.log('resorted reviews!')
-      this.setState({ reviews: res.data.results })
+      }
     })
-    .catch((err) =>
-      console.log(err));
+      .then((res) => {
+        console.log('resorted reviews!')
+        this.setState({ reviews: res.data.results })
+      })
+      .catch((err) =>
+        console.log(err));
   }
 
   toggleReviewModal() {
@@ -81,7 +87,7 @@ class RatingsReviews extends React.Component {
     if (this.state.reviewsToDiplay >= 2 && this.state.reviewsToDiplay < this.state.reviews.length) {
       return <button className='ratings-reviews-btn' onClick={(e) => {
         e.preventDefault()
-        this.setState({reviewsToDiplay: this.state.reviewsToDiplay + 2})
+        this.setState({ reviewsToDiplay: this.state.reviewsToDiplay + 2 })
       }}
       > More Reviews </button>
     }
@@ -92,14 +98,14 @@ class RatingsReviews extends React.Component {
     var filteredReviews = this.allReviews.filter(review => {
       return this.ratingsFiltersStatus[review.rating]
     })
-    this.setState({reviews: filteredReviews, reviewsToDiplay: filteredReviews.length})
+    this.setState({ reviews: filteredReviews, reviewsToDiplay: filteredReviews.length })
 
     var allAreFalse = Object.values(this.ratingsFiltersStatus).every(value => {
       return value === false
     })
 
     if (allAreFalse) {
-      this.setState({reviews: this.allReviews, reviewsToDiplay: this.allReviews.length})
+      this.setState({ reviews: this.allReviews, reviewsToDiplay: this.allReviews.length })
     }
   }
 
@@ -114,9 +120,9 @@ class RatingsReviews extends React.Component {
           <div className='breakdowns'>
             <div><RatingBreakdown
               reviewMeta={this.props.reviewMeta}
-              filterReviews={this.filterReviews}/>
+              filterReviews={this.filterReviews} />
             </div>
-            <div><ProductBreakdown reviewMeta={this.props.reviewMeta}/></div>
+            <div><ProductBreakdown reviewMeta={this.props.reviewMeta} /></div>
           </div>
 
           <div className='reviews-list-container'>
@@ -125,7 +131,7 @@ class RatingsReviews extends React.Component {
               <span>
                 <select className='reviews-sorting-dropdown' onChange={this.handleSort}>
                   <option value='relevant'>Relevance</option>
-                  <option value='helpful'>Helpfulness</option>
+                  <option value='helpfulness'>Helpfulness</option>
                   <option value='newest'>Newest</option>
                 </select>
               </span>
@@ -133,7 +139,7 @@ class RatingsReviews extends React.Component {
 
             <ReviewsList
               reviews={this.state.reviews.slice(0, this.state.reviewsToDiplay)}
-              reviewsToDiplay={this.state.reviewsToDiplay}/>
+              reviewsToDiplay={this.state.reviewsToDiplay} />
 
             <div className='footer-btns'>
               {this.setNumReviewsToDisplay()}
@@ -142,11 +148,11 @@ class RatingsReviews extends React.Component {
                 toggleReviewModal={this.toggleReviewModal}
                 showAddReviewModal={this.state.showAddReviewModal}
                 reviewMeta={this.props.reviewMeta}
-                product={this.props.product}/>
+                product={this.props.product} />
               </div>
             </div>
 
-            </div>
+          </div>
         </div>
       </div>
 

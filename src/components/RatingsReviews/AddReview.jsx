@@ -128,7 +128,7 @@ class AddReview extends React.Component {
       console.log(res)
       this.props.toggleReviewModal()
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log('this is the error from the client handle submit review =',err))
   }
 
 

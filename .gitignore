@@ -1,5 +1,7 @@
 node_modules/
+src/config
 src/config/config.js
 FECkeypair.pem
 coverage/
 SEGAkeypair.pem
+
