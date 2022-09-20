@@ -31,24 +31,26 @@ const getReviewData = (product_Id, page = 1, count = 5, sort = 'helpfulness') =>
 
 //TODO:  activate the page number param to working order
 
-  return db.queryAsync(
-    `SELECT review.id as review_id, review.product_id, review.rating, review.date, review.summary, review.body, review.recommend, review.reviewer_name, review.helpfulness,
+return db.queryAsync(
+  `SELECT review.id as review_id, review.product_id, review.rating, review.date, review.summary, review.body, review.recommend, review.reviewer_name, review.response, review.helpfulness,
+    (
+      SELECT array_to_json(coalesce(array_agg(photo), array[]::record[]))
+      from
       (
-        SELECT array_to_json(coalesce(array_agg(photo), array[]::record[]))
-        from
-        (
-          SELECT photos.id, photos.url FROM public.photos INNER JOIN public.review r ON review.id = photos.review_id WHERE photos.review_id = r.id ORDER BY id ASC LIMIT 5
-        ) photo
-      ) as photos
+        SELECT photos.id, photos.url FROM public.photos INNER JOIN public.review r ON review.id = photos.review_id WHERE photos.review_id = r.id ORDER BY id ASC LIMIT 5
+      ) photo
+    ) as photos
 
-    FROM public.review WHERE review.product_id=${product_Id} ORDER BY ${sort} DESC LIMIT ${count}`)
-    .then((res) => {
-      return {'product': product_Id, 'page':page, 'count':count, 'results':res[0].rows}``
-    })
-    .then((res) => {
-      return res
-    })
-    .catch((err) => (console.log('error in getting reviews', err)));
+  FROM public.review WHERE review.product_id=${product_Id} ORDER BY ${sort} DESC LIMIT ${count}`)
+  .then((res) => {
+    //console.log(res[0].rows[2]);
+    return { 'product': product_Id, 'page': page, 'count': count, 'results': res[0].rows }
+  })
+  .then((res) => {
+    console.log(res);
+    return res
+  })
+  .catch((err) => (console.log('error in getting reviews', err)));
 }
 
 const getReviewMeta = (product_id) => {
