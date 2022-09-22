@@ -22,9 +22,9 @@ class App extends React.Component {
 
   componentDidMount() {
 
-    axios.get('http://localhost:8080/reivews')
-      .then(response => console.log(response))
-      .catch(err => console.log(err));
+    // axios.get('http://localhost:8080/reviews')
+    //   .then(response => console.log(response))
+    //   .catch(err => console.log(err));
 
     axios.get('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfc/products/', {
       headers: {'Authorization': `${API_KEY}`},
@@ -34,7 +34,7 @@ class App extends React.Component {
       }})
     .then(res => {
       this.setState({ products: res.data, product: res.data[2] })
-      return axios.get('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfc/reviews/meta', {
+      return axios.get('reviews/meta', {
         headers: {'Authorization': `${API_KEY}`},
         params: {product_id: res.data[2].id}
       })

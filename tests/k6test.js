@@ -13,29 +13,21 @@ export const options = {
 }
 
 export default function () {
-  // const params = {
-  // product_id: Math.floor(Math.random() * 1000011) + 1,
-  // }
-  // const res = http.get(`http://localhost:8080/meta`, params);
-  // check(res, {
-  //   'is status 200': (r) => r.status === 200
-  // })
-  const params2 = {
-    product_id: Math.floor(Math.random() * 1000011) + 1,
-    page: 1,
-    count: 5,
-    sort: 'helpfulness'
+  const params = {
+  product_id: Math.floor(Math.random() * 1000011) + 1,
   }
-  const res2 = http.get(`http://localhost:8080/reviews`, params2);
-  check(res2, {
+  const res = http.get(`http://localhost:8080/reviews/meta`, params);
+  check(res, {
     'is status 200': (r) => r.status === 200
   })
-  // const res3 = http.get(`http://localhost:3000/products/1/styles?product_id=1`);
-  // check(res3, {
-  //   'is status 200': (r) => r.status === 200
-  // })
-  // const res4 = http.get(`http://localhost:3000/products/1/related?product_id=1`);
-  // check(res4, {
+  // const params2 = {
+  //   product_id: Math.floor(Math.random() * 1000011) + 1,
+  //   page: 1,
+  //   count: 5,
+  //   sort: 'helpfulness'
+  // }
+  // const res2 = http.get(`http://localhost:8080/reviews`, params2);
+  // check(res2, {
   //   'is status 200': (r) => r.status === 200
   // })
 }

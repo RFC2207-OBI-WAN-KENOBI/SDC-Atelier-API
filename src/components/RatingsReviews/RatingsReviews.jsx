@@ -36,9 +36,10 @@ class RatingsReviews extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('hello from ratingsreviews componentDidUpdate');
-    if (this.props.product !== prevProps.product) {
-      axios.get('http://localhost:8080/reviews',
+    //console.log('hello from ratingsreviews componentDidUpdate');
+    //console.log('this.props.product =', this.props.product);
+    if (this.props.product !== prevProps.product && this.props.product) {
+      axios.get('/reviews',
         {
           params: {
             count: 50,
@@ -49,7 +50,7 @@ class RatingsReviews extends React.Component {
         }
       )
         .then(res => {
-          console.log(res);
+          //console.log(res);
           this.setState({ reviews: res.data.results });
           this.allReviews = res.data.results;
         })
@@ -63,7 +64,7 @@ class RatingsReviews extends React.Component {
     e.preventDefault();
     let sortMethod = e.target.value
     this.setState({ sort: sortMethod });
-    axios.get('http://localhost:8080/reviews', {
+    axios.get('/reviews', {
 
       params: {
         // count: 10,
